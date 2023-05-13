@@ -1,0 +1,28 @@
+1. Classe Scraper:
+   - Atributos:
+     - url (string)
+     - dados (lista)
+   - Métodos:
+     - fazer_requisicao()
+     - analisar_conteudo(conteudo)
+     - extrair_dados(analise)
+     - salvar_dados()
+
+2. Classe Parser (classe abstrata ou interface):
+   - Métodos:
+     - analisar(conteudo)
+
+3. Classe BeautifulSoupParser (implementação da classe Parser):
+   - Métodos:
+     - analisar(conteudo): usa a biblioteca BeautifulSoup para analisar o conteúdo da página e retornar a análise do html.
+
+4. Classe DataExtractor (classe abstrata ou interface):
+   - Métodos:
+     - extrair(analise)
+
+5. Classe CustomDataExtractor (uma implementação da classe DataExtractor):
+   - Métodos:
+     - extrair(analise): extrai os dados específicos do projeto a partir da análise do html.
+
+
+Com esse diagrama, junto com parsers e extratores já se tem uma base para lidar com sites
