@@ -1,8 +1,9 @@
+# importação das bibliotecas necessárias
 import requests
 from bs4 import BeautifulSoup
 import signal
 
-
+# definição da classe scraper, que contém as informações necessárias. o construtor inicializa as variáveis necessárias pro scraper
 class Scraper:
 
   def __init__(self, url):
@@ -12,6 +13,8 @@ class Scraper:
     self.data_extractor = CustomDataExtractor()
     self.counts = {}
     self.total_count = 0
+
+  # método que inicia o scraping. usa o signal alarm pra evitar que o scraper fique preso em uma página, chama o método _scrape_page para realizar o scraping e no final, exibe o total de ocorrências encontradas.
 
   def scrape(self):
     signal.signal(signal.SIGALRM, self._handle_timeout)
@@ -25,11 +28,14 @@ class Scraper:
 
     total_counts = sum(self.counts.values())
     print(f"\nTotal de ocorrências:\n{self.total_count}\n")
+    
+# Método que é chamado quando o alarme é disparado. Exibe uma mensagem de erro e encerra a execução.
 
   def _handle_timeout(self, signum, frame):
     print("Tempo limite excedido. Encerrando a execução.")
     raise TimeoutError()
-
+# Método que realiza o scraping de uma página. Verifica se a página já foi visitada. Obtém o conteúdo da página e extrai os dados relevantes. Armazena as informações em um dicionário. Se a profundidade permitir, chama o método _scrape_page para realizar o scraping das páginas encontradas.
+   
   def _scrape_page(self, url, depth):
     if url in self.visited_links:
       return
@@ -50,6 +56,8 @@ class Scraper:
       for link in self.parser.get_links(content):
         self._scrape_page(link, depth=depth - 1)
 
+# método que obtém o conteúdo de uma página. verifica se a página foi acessada com sucesso. retorna o conteúdo da página ou None em caso de erro.
+        
   def _fetch_content(self, url):
     try:
       response = requests.get(url)
@@ -62,6 +70,7 @@ class Scraper:
 
     return None
 
+# Definição das classes DataExtractor e Parser, que são utilizadas para extrair os dados relevantes e os links das páginas.
 
 class DataExtractor:
 
@@ -77,6 +86,7 @@ class Parser:
   def get_links(self, content):
     raise NotImplementedError()
 
+# definição da classe BeautifulSoupParser, que é utilizada para extrair os dados relevantes e os links das páginas utilizando a biblioteca BeautifulSoup.
 
 class BeautifulSoupParser(Parser):
 
@@ -92,6 +102,7 @@ class BeautifulSoupParser(Parser):
         links.append(href)
     return links
 
+# definição da classe CustomDataExtractor, que é utilizada para extrair os dados relevantes das páginas.
 
 class CustomDataExtractor(DataExtractor):
 
@@ -101,7 +112,9 @@ class CustomDataExtractor(DataExtractor):
     print(f"A palavra '{word}' aparece {count} vezes na página.")
     return count
 
+# Código que é executado quando o arquivo é executado diretamente. Define a URL a ser utilizada e chama o método scrape para realizar o scraping. Exibe a contagem de ocorrências encontradas.
 
+  
 if __name__ == "__main__":
   url = "https://fortaleza1918.com.br/"
   scraper = Scraper(url)
